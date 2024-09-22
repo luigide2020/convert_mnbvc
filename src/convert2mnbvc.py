@@ -51,26 +51,24 @@ def convert_to_parquet(dataset, output_file):
             image_content = crop_and_convert_to_bytes(original_image, obj['bbox'])
 
             category_id = obj['category_id']
-            if category_id == 6:
-                block_type = 'image'
-            else:
-                block_type = 'text'
+            category_name = ['Caption', 'Footnote', 'Formula', 'List-item', 'Page-footer', 'Page-header', 'Picture', 'Section-header', 'Table', 'Text', 'Title']
+            block_type = category_name[category_id]
+            extended_fields['bbox'] = obj['bbox']
 
             row = {
-                'entity_id': item['doc_name'],
-                'block_id': block_id,
-                'timestamp': current_time,
-                'extended_fields': json.dumps(extended_fields),
-                'text': obj['text'],
-                'image': image_content,
-                'ocr_text': json.dumps(obj['cells']),  # 使用原始文本以及bbox作为OCR文本
-                'audio': None,
-                'stt_text': None,
-                'block_type': block_type,  
-                'file_md5': hashlib.md5(item['doc_name'].encode()).hexdigest(),
-                'page_id': item['page_no'],
-                'bbox': json.dumps(obj['bbox']),
-                'category_id': category_id
+                '实体ID': item['doc_name'],
+                '块ID': block_id,
+                '时间': current_time,
+                '扩展字段': json.dumps(extended_fields),
+                '文本': obj['text'],
+                '图片': image_content,
+                'OCR文本': json.dumps(obj['cells']),  # 使用原始文本以及bbox作为OCR文本
+                '音频': None,
+                'STT文本': None,
+                '其它块': None,
+                '块类型': block_type,  
+                '文件md5': hashlib.md5(item['doc_name'].encode()).hexdigest(),
+                '页ID': item['page_no']
             }
 
             converted_data.append(row)
