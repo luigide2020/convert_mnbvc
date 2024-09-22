@@ -44,8 +44,7 @@ def convert_to_parquet(dataset, output_file):
         original_image = item['image']  # PIL Image对象
 
         for obj in item['objects']:
-            block_counter[doc_key] += 1
-            block_id = f"{item['doc_name']}_{block_counter[doc_key]}"
+            block_id = block_counter[doc_key]
 
             # 裁剪图片并转换为字节
             image_content = crop_and_convert_to_bytes(original_image, obj['bbox'])
@@ -72,6 +71,7 @@ def convert_to_parquet(dataset, output_file):
             }
 
             converted_data.append(row)
+            block_counter[doc_key] += 1
 
     df = pd.DataFrame(converted_data)
     table = pa.Table.from_pandas(df)
